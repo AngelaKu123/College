@@ -1,0 +1,20 @@
+Assembly Language hw1
+環境: Windows VMware Ubuntu 22.04
+
+Q1: 
+1. 點擊ppt內的link到老師提供的載點
+2. 下載 "arm-cross-toolchain-linux-64-ubuntu22.gcc12.tar.gz"
+3. 以指令解壓縮 "tar -xvf arm-cross-toolchain-linux-64-ubuntu22.gcc12.tar.gz -C /opt/"
+4. 以 cd 指令逐步確認 bin 資料夾路徑
+5. 將路徑添加到 .bashrc 文件中，將其設定為系統環境變數: "nano ~/.bashrc", "export PATH="/opt/arm-cross-toolchain/cross-tool-ubuntu22/bin:$PATH"", ^X, y, enter, "source ~/.bashrc"
+
+Q2:
+`hw1.o`是經由組譯器(arm-none-eabi-as)將`hw1.s`轉換而成的物件檔案，需要再經過鏈接才能生成可執行檔
+`hw1.exe`是經由編譯器(arm-none-eabi-gcc)將`hw1.s`組譯並自動鏈接所需的library和其他物件檔後，生成的執行檔
+兩者不同的原因在於工具性質不同。組譯器負責解析組合語言並轉換為機器碼，其產生的.o檔為中間檔案，需進一步處理；編譯器雖然也可將程式語言轉換為機器碼，但其主要功能是整合所有物件檔和函式庫，最後生成可直接操作的執行檔案。
+
+Q3:
+`sample_arm.s`使用ARM架構；`sample_native.s`使用電腦本地的處理器，例如x86或x64，在我的系統中是x64。
+
+Q4:
+"-g"讓編譯器將偵錯資訊新增到物件檔或執行檔中，使debugger(GDB)和開發者調試時更好追蹤程式的動態進程。
