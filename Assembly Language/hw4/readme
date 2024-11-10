@@ -1,0 +1,25 @@
+執行環境: windows vmware ubuntu 22.04
+
+程式內容:
+在 data 區指定 5*5 input matrix 值，事先清空並初始化 3*3 output matrix 的位置。
+呼叫暫存器 r0、r4 儲存 input matrix 的位址，r4 稍候將作為 index 使用；r1、r9 儲存 output matrix 的位址，r9 為 index。
+將 r2、r3 作為 output matrix 的 row index 和 column index，形成雙層迴圈。
+初始化 r5、r6、r7、r8，用於儲存 2*2 kernal 的值。
+r5 -> kernal(0, 0)
+r6 -> (0, 1)
+r7 -> (1, 0)
+r8 -> (1, 1)
+此處同時處理邊界情況:
+1. column boundary
+在輸出矩陣的最右行(col == 2)時，程式不會嘗試讀取 input matrix 中右側不在範圍內的值。當 CMP r3, #2 檢查到目前的 output matrix index == 2時，程式執行 BEQ not_boundary_column，跳過 LDR r6 和 LDR r8 指令，以避免讀取不存在的數據。
+2. row boundary
+在輸出矩陣的最下列(row == 2)時，程式僅在可用列內執行數據讀取。此時 CMP r2, #2 確認 output matrix index == 2，將不跳轉至 not_boundary_row，接續執行 MOV r7, #0 和 MOV r8, #0 將無效的列數據清除，防止後續不必要的比較操作。
+
+比較完後將最大值賦予 r9，等於填入當前 output matrix element。隨後各 index 增加，為下一次迴圈做準備。當 col == 2，將結束內側迴圈，修正 r4 至下一迴圈起始點。
+
+
+編譯:
+範例 makefile，修改指令及檔名後使用。
+
+執行:
+`arm-none-eabi-insight`，在GDB ARM simulator執行成功。
