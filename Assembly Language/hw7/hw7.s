@@ -16,6 +16,10 @@
 	.ascii "input.txt\0"
 .output_filename_addr:
     .ascii "output.txt\0"
+.read_buffer:
+	.space 4
+.write_buffer:
+	.space 4
 
 /* ========================= */
 /*       TEXT section        */
@@ -39,11 +43,11 @@
 	.space 4
 .read_param:
 	.space 4
-	.space 4
+	.word .read_buffer
 	.space 4
 .write_param:
 	.space 4   /* file descriptor */
-	.space 4  /* address of the string */
+	.word .write_buffer
 	.space 4   /* length of the string */
 .close_param:
 	.space 4
@@ -71,6 +75,9 @@ main:
 	mov r6, r0
 
 loop:      
+	cmp r6, #0
+    BEQ add_end
+
     /* read from a file */
 	adr r1, .read_param
 	MOV r8, #0
@@ -84,9 +91,6 @@ loop:
 
 	mov r3, #1
 	str r3, [r1, #8]          /* store the length of the string */
-
-	cmp r6, #0
-    BEQ add_end
 
 	mov r0, #SWI_Read
 	swi AngelSWI
@@ -108,7 +112,7 @@ write_step:
     STR r9, [r1, #8]
 
     STR r7, [r1, #0]
-    STR r4, [r1, #4]
+    STRB r4, [r1, #4]
     MOV r8, #1
     STR r8, [r1, #8]
 
@@ -122,7 +126,7 @@ add_end:
     MOV r4, #'\n'
     ADR r1, .write_param
     STR r7, [r1, #0]
-    STR r4, [r1, #4]
+    STRB r4, [r1, #4]
     STR r8, [r1, #8]
 
     MOV r0, #SWI_Write
