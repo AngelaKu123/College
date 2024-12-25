@@ -1,3 +1,0 @@
-Cyclic dependency detected. Infinite attack loop possible.
-2 c
-0->2->3
